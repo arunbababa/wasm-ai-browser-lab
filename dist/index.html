@@ -11,55 +11,36 @@
       <section class="workspace" aria-label="WASM AI demo">
         <header class="topbar">
           <div>
-            <p class="system-label">Local WebAssembly inference</p>
-            <h1>WASM AI Browser Lab</h1>
+            <p class="system-label">Real in-browser transformer inference</p>
+            <h1>Browser AI Lab</h1>
           </div>
-          <div class="runtime-pill" id="model-status">Booting model</div>
+          <div class="runtime-pill" id="model-status">Loading real model</div>
         </header>
 
         <div class="grid">
           <section class="panel controls" aria-labelledby="controls-title">
             <div class="panel-heading">
-              <p class="system-label">Input vector</p>
-              <h2 id="controls-title">Tune the signal</h2>
+              <p class="system-label">Text input</p>
+              <h2 id="controls-title">Run a pretrained model locally</h2>
             </div>
 
-            <label class="slider-row">
+            <label class="text-input">
               <span>
-                <strong>Energy</strong>
-                <small>How much force the prompt carries</small>
+                <strong>Prompt</strong>
+                <small>Japanese or English text is sent directly to a Hugging Face model in this browser.</small>
               </span>
-              <output id="energy-value" for="energy">24</output>
-              <input id="energy" type="range" min="0" max="40" value="24">
-            </label>
-
-            <label class="slider-row">
-              <span>
-                <strong>Focus</strong>
-                <small>How directed the intent feels</small>
-              </span>
-              <output id="focus-value" for="focus">26</output>
-              <input id="focus" type="range" min="0" max="40" value="26">
-            </label>
-
-            <label class="slider-row">
-              <span>
-                <strong>Noise</strong>
-                <small>Ambiguity, novelty, or drift</small>
-              </span>
-              <output id="noise-value" for="noise">9</output>
-              <input id="noise" type="range" min="0" max="40" value="9">
+              <textarea id="prompt-input" rows="7">このデモ、ブラウザだけで本物のAIモデルが動くならかなりいい感じ。</textarea>
             </label>
 
             <button class="run-button" id="run-button" type="button">
-              Run WASM inference
+              Run real AI inference
             </button>
           </section>
 
           <section class="panel result" aria-labelledby="result-title">
             <div class="panel-heading">
-              <p class="system-label">Model output</p>
-              <h2 id="result-title">Waiting for first pass</h2>
+              <p class="system-label">Transformer output</p>
+              <h2 id="result-title">Loading model weights</h2>
             </div>
 
             <div class="confidence">
@@ -67,7 +48,7 @@
               <span>confidence</span>
             </div>
             <p id="result-description" class="description">
-              The tiny model will rank three modes after the WASM module loads.
+              First load downloads a real quantized transformer model. After that, inference runs in the browser.
             </p>
 
             <div class="score-list" id="score-list" aria-live="polite"></div>
@@ -76,8 +57,8 @@
 
         <section class="panel telemetry" aria-label="Runtime telemetry">
           <div>
-            <span class="metric-label">WASM source</span>
-            <strong id="wasm-source">loading</strong>
+            <span class="metric-label">Model</span>
+            <strong id="model-source">loading</strong>
           </div>
           <div>
             <span class="metric-label">Last runtime</span>

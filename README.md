@@ -1,17 +1,20 @@
-# WASM AI Browser Lab
+# Browser AI Lab
 
-A tiny dependency-free browser demo that runs an AI-like scoring model in
-WebAssembly. The model is intentionally small so it loads instantly and can be
-deployed as plain static files.
+A static browser demo that runs a real pretrained Hugging Face transformer model
+in the browser with Transformers.js. There is no backend API call for inference:
+the browser downloads model assets and runs ONNX/WebAssembly locally.
 
 ## What It Shows
 
-- Browser-only WebAssembly inference
-- Three exported WASM score functions: `score_calm`, `score_build`,
-  `score_explore`
-- UI sliders that update the input vector
-- Ranked model output, confidence, raw scores, runtime, and load source
-- Generated-byte fallback if the `.wasm` asset cannot be fetched
+- Browser-only transformer inference with `@huggingface/transformers`
+- Real pretrained model: `nlptown/bert-base-multilingual-uncased-sentiment`
+- Quantized model loading with `dtype: "q4"`
+- Japanese or English text input
+- Confidence, star sentiment label, raw model output, runtime, and model id
+- Static hosting friendly: GitHub Pages, Cloudflare Pages, or any file host
+
+The repository still contains the tiny handwritten WASM module used as an early
+diagnostic, but the app UI now runs the real transformer model.
 
 ## Run In WSL
 
@@ -39,13 +42,14 @@ Runs the Node test suite.
 npm run build:wasm
 ```
 
-Writes `public/tiny-infer.wasm` from the local bytecode builder.
+Writes `public/tiny-infer.wasm` from the local bytecode builder. This is kept as
+a diagnostic artifact, not the main AI path.
 
 ```bash
 npm run build
 ```
 
-Writes the WASM file and copies only deployable static assets into `dist/`.
+Writes the diagnostic WASM file and copies deployable static assets into `dist/`.
 
 ```bash
 npm run check
@@ -75,7 +79,8 @@ Root directory: /
 ```
 
 The app does not need Pages Functions, Workers, a server, or an API key for the
-demo itself.
+demo itself. Inference model assets are fetched by the visitor's browser from
+Hugging Face/CDN.
 
 ### GitHub Pages
 
@@ -114,6 +119,6 @@ use a GitHub Actions workflow that runs `npm run build:wasm` before publishing.
 
 ## Notes
 
-This is a small local model, not an LLM. It proves the browser/WASM path first.
-The same shell can later be upgraded to a heavier in-browser model using
-Transformers.js, ONNX Runtime Web, or WebGPU-backed inference.
+The current model is a real transformer classifier, not an LLM. A heavier next
+step would be browser text generation with a small causal language model, or a
+WebGPU-backed model when the target browser supports it.

@@ -1,107 +1,89 @@
-import { loadTinyModel, runTinyModel } from "./inference/runTinyModel.js";
-
-const controls = {
-  energy: document.querySelector("#energy"),
-  focus: document.querySelector("#focus"),
-  noise: document.querySelector("#noise"),
-};
-
-const values = {
-  energy: document.querySelector("#energy-value"),
-  focus: document.querySelector("#focus-value"),
-  noise: document.querySelector("#noise-value"),
-};
+import {
+  loadRealTransformer,
+  MODEL_ID,
+  runRealTransformer,
+  TRANSFORMERS_VERSION,
+} from "./inference/realTransformer.js";
 
 const elements = {
   status: document.querySelector("#model-status"),
   runButton: document.querySelector("#run-button"),
+  promptInput: document.querySelector("#prompt-input"),
   resultTitle: document.querySelector("#result-title"),
   resultDescription: document.querySelector("#result-description"),
   confidence: document.querySelector("#confidence-value"),
   scoreList: document.querySelector("#score-list"),
-  wasmSource: document.querySelector("#wasm-source"),
+  modelSource: document.querySelector("#model-source"),
   runtime: document.querySelector("#runtime"),
   log: document.querySelector("#execution-log"),
 };
 
-let model;
+let classifier;
 let lastRun = 0;
 
-function readInputs() {
-  return {
-    energy: controls.energy.value,
-    focus: controls.focus.value,
-    noise: controls.noise.value,
-  };
-}
-
-function syncOutputValues() {
-  for (const key of Object.keys(controls)) {
-    values[key].value = controls[key].value;
-    values[key].textContent = controls[key].value;
-  }
-}
-
-function renderScores(ranking) {
+function renderStars(stars) {
   elements.scoreList.replaceChildren(
-    ...ranking.map((item) => {
-      const row = document.createElement("article");
-      row.className = "score-row";
-      row.innerHTML = `
-        <div class="score-meta">
-          <strong>${item.title}</strong>
-          <span>${item.score} raw score</span>
-        </div>
-        <div class="score-track" aria-hidden="true">
-          <span style="width: ${item.percent}%"></span>
-        </div>
-        <b>${item.percent}%</b>
-      `;
-      return row;
+    ...Array.from({ length: 5 }, (_, index) => {
+      const star = document.createElement("span");
+      star.className = index < stars ? "star is-active" : "star";
+      star.textContent = "★";
+      return star;
     }),
   );
 }
 
-function renderRun() {
-  if (!model) {
+async function renderRun() {
+  if (!classifier) {
     return;
   }
 
-  syncOutputValues();
-  const output = runTinyModel(model, readInputs());
+  const text = elements.promptInput.value.trim();
+  if (!text) {
+    elements.log.textContent = "enter text before running inference";
+    return;
+  }
+
+  elements.runButton.disabled = true;
+  elements.status.textContent = "Running locally";
+  elements.log.textContent = "tokenizing text and running ONNX/WASM inference";
+
+  const output = await runRealTransformer(classifier, text);
   lastRun += 1;
 
-  elements.resultTitle.textContent = output.result.title;
-  elements.resultDescription.textContent = output.result.description;
+  elements.resultTitle.textContent = `${output.result.stars} star sentiment`;
+  elements.resultDescription.textContent = `Real pretrained transformer result: ${output.result.summary}. Raw label: ${output.result.label}.`;
   elements.confidence.textContent = `${output.result.confidence}%`;
   elements.runtime.textContent = `${output.runtimeMs.toFixed(3)} ms`;
-  elements.log.textContent = `run #${lastRun}: scores ${JSON.stringify(output.scores)}`;
-  renderScores(output.result.ranking);
+  elements.log.textContent = `run #${lastRun}: ${JSON.stringify(output.raw)}`;
+  elements.status.textContent = "Model ready";
+  elements.runButton.disabled = false;
+  renderStars(output.result.stars);
 }
 
 async function boot() {
-  syncOutputValues();
   elements.runButton.disabled = true;
+  elements.modelSource.textContent = MODEL_ID;
+  elements.log.textContent = `loading Transformers.js ${TRANSFORMERS_VERSION}`;
 
   try {
-    const loaded = await loadTinyModel();
-    model = loaded.instance.exports;
-    elements.status.textContent = "WASM model ready";
-    elements.wasmSource.textContent = loaded.source;
-    elements.log.textContent = loaded.warning
-      ? `loaded fallback after: ${loaded.warning}`
-      : "loaded ./public/tiny-infer.wasm";
-    renderRun();
+    classifier = await loadRealTransformer({
+      onProgress: (event) => {
+        if (event?.status) {
+          const file = event.file ? ` ${event.file}` : "";
+          elements.log.textContent = `${event.status}${file}`;
+        }
+      },
+    });
+    elements.status.textContent = "Model ready";
+    elements.log.textContent = "model loaded in browser; no backend call required";
+    await renderRun();
   } catch (error) {
     elements.status.textContent = "Model failed";
     elements.log.textContent = error instanceof Error ? error.message : String(error);
+    elements.runButton.disabled = false;
   } finally {
     elements.runButton.disabled = false;
   }
-}
-
-for (const control of Object.values(controls)) {
-  control.addEventListener("input", renderRun);
 }
 
 elements.runButton.addEventListener("click", renderRun);

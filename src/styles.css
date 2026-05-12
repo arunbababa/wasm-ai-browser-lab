@@ -136,13 +136,19 @@ h2 {
   align-items: center;
 }
 
-.slider-row strong,
+.text-input,
+.text-input span {
+  display: grid;
+  gap: 8px;
+}
+
+.text-input strong,
 .score-meta strong {
   display: block;
   font-size: 0.96rem;
 }
 
-.slider-row small,
+.text-input small,
 .score-meta span,
 .description {
   color: var(--muted);
@@ -150,17 +156,18 @@ h2 {
   line-height: 1.5;
 }
 
-output {
-  min-width: 3ch;
-  font-weight: 800;
-  text-align: right;
-}
-
-input[type="range"] {
-  grid-column: 1 / -1;
+textarea {
   width: 100%;
+  min-height: 190px;
   min-width: 0;
-  accent-color: var(--blue);
+  resize: vertical;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px;
+  color: var(--ink);
+  background: #fbfcfe;
+  font-size: 1rem;
+  line-height: 1.6;
 }
 
 .run-button {
@@ -211,37 +218,19 @@ input:focus-visible {
 }
 
 .score-list {
-  display: grid;
-  gap: 12px;
+  display: flex;
+  gap: 8px;
   margin-top: 24px;
 }
 
-.score-row {
-  display: grid;
-  grid-template-columns: minmax(130px, 1fr) minmax(120px, 1.3fr) 48px;
-  gap: 14px;
-  align-items: center;
-  padding: 12px 0;
-  border-top: 1px solid var(--line);
+.star {
+  color: #d8dee8;
+  font-size: clamp(2rem, 5vw, 3rem);
+  line-height: 1;
 }
 
-.score-track {
-  height: 10px;
-  overflow: hidden;
-  border-radius: 999px;
-  background: #e9edf4;
-}
-
-.score-track span {
-  display: block;
-  height: 100%;
-  border-radius: inherit;
-  background: linear-gradient(90deg, var(--blue), var(--green), var(--coral));
-  transition: width 180ms ease;
-}
-
-.score-row b {
-  text-align: right;
+.star.is-active {
+  color: var(--coral);
 }
 
 .telemetry {
