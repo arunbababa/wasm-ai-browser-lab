@@ -1,0 +1,13 @@
+{
+  "name": "wasm-ai-browser-lab",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "build:wasm": "node scripts/write-wasm.mjs",
+    "build": "npm run build:wasm && node scripts/build-site.mjs",
+    "dev": "npm run build:wasm && python3 -m http.server 5173",
+    "check": "npm run test && npm run build"
+  }
+}

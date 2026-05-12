@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>WASM AI Browser Lab</title>
+    <link rel="stylesheet" href="./src/styles.css">
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="workspace" aria-label="WASM AI demo">
+        <header class="topbar">
+          <div>
+            <p class="system-label">Local WebAssembly inference</p>
+            <h1>WASM AI Browser Lab</h1>
+          </div>
+          <div class="runtime-pill" id="model-status">Booting model</div>
+        </header>
+
+        <div class="grid">
+          <section class="panel controls" aria-labelledby="controls-title">
+            <div class="panel-heading">
+              <p class="system-label">Input vector</p>
+              <h2 id="controls-title">Tune the signal</h2>
+            </div>
+
+            <label class="slider-row">
+              <span>
+                <strong>Energy</strong>
+                <small>How much force the prompt carries</small>
+              </span>
+              <output id="energy-value" for="energy">24</output>
+              <input id="energy" type="range" min="0" max="40" value="24">
+            </label>
+
+            <label class="slider-row">
+              <span>
+                <strong>Focus</strong>
+                <small>How directed the intent feels</small>
+              </span>
+              <output id="focus-value" for="focus">26</output>
+              <input id="focus" type="range" min="0" max="40" value="26">
+            </label>
+
+            <label class="slider-row">
+              <span>
+                <strong>Noise</strong>
+                <small>Ambiguity, novelty, or drift</small>
+              </span>
+              <output id="noise-value" for="noise">9</output>
+              <input id="noise" type="range" min="0" max="40" value="9">
+            </label>
+
+            <button class="run-button" id="run-button" type="button">
+              Run WASM inference
+            </button>
+          </section>
+
+          <section class="panel result" aria-labelledby="result-title">
+            <div class="panel-heading">
+              <p class="system-label">Model output</p>
+              <h2 id="result-title">Waiting for first pass</h2>
+            </div>
+
+            <div class="confidence">
+              <span id="confidence-value">0%</span>
+              <span>confidence</span>
+            </div>
+            <p id="result-description" class="description">
+              The tiny model will rank three modes after the WASM module loads.
+            </p>
+
+            <div class="score-list" id="score-list" aria-live="polite"></div>
+          </section>
+        </div>
+
+        <section class="panel telemetry" aria-label="Runtime telemetry">
+          <div>
+            <span class="metric-label">WASM source</span>
+            <strong id="wasm-source">loading</strong>
+          </div>
+          <div>
+            <span class="metric-label">Last runtime</span>
+            <strong id="runtime">0.000 ms</strong>
+          </div>
+          <div>
+            <span class="metric-label">Execution log</span>
+            <code id="execution-log">model boot requested</code>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>
