@@ -7,8 +7,8 @@ the browser downloads model assets and runs ONNX/WebAssembly locally.
 ## What It Shows
 
 - Browser-only transformer inference with `@huggingface/transformers`
-- Real pretrained model: `nlptown/bert-base-multilingual-uncased-sentiment`
-- Japanese or English text input
+- Real pretrained model: `Xenova/distilbert-base-uncased-finetuned-sst-2-english`
+- English text input
 - Confidence, star sentiment label, raw model output, runtime, and model id
 - Static hosting friendly: GitHub Pages, Cloudflare Pages, or any file host
 
