@@ -35,7 +35,6 @@ export async function loadRealTransformer({ onProgress } = {}) {
     ).then(async ({ pipeline, env }) => {
       env.allowLocalModels = false;
       return pipeline(TASK, MODEL_ID, {
-        dtype: "q4",
         progress_callback: (event) => {
           if (typeof onProgress === "function") {
             onProgress(event);

@@ -8,7 +8,6 @@ the browser downloads model assets and runs ONNX/WebAssembly locally.
 
 - Browser-only transformer inference with `@huggingface/transformers`
 - Real pretrained model: `nlptown/bert-base-multilingual-uncased-sentiment`
-- Quantized model loading with `dtype: "q4"`
 - Japanese or English text input
 - Confidence, star sentiment label, raw model output, runtime, and model id
 - Static hosting friendly: GitHub Pages, Cloudflare Pages, or any file host
