@@ -1,12 +1,19 @@
 export const TRANSFORMERS_VERSION = "3.8.1";
-export const MODEL_ID = "nlptown/bert-base-multilingual-uncased-sentiment";
+export const MODEL_ID = "Xenova/distilbert-base-uncased-finetuned-sst-2-english";
 export const TASK = "sentiment-analysis";
 
 let classifierPromise;
 
 export function parseStarLabel(label) {
-  const match = String(label).match(/([1-5])/);
-  return match ? Number(match[1]) : 0;
+  const value = String(label).toLowerCase();
+  if (value.includes("positive")) {
+    return 5;
+  }
+  if (value.includes("negative")) {
+    return 1;
+  }
+  const match = value.match(/([1-5])/);
+  return match ? Number(match[1]) : 3;
 }
 
 export function formatSentimentResult(output) {
@@ -20,11 +27,7 @@ export function formatSentimentResult(output) {
     stars,
     confidence: Math.round(score * 100),
     score,
-    summary: stars >= 4
-      ? "positive"
-      : stars <= 2
-        ? "negative"
-        : "mixed",
+    summary: label.toLowerCase(),
   };
 }
 
@@ -35,6 +38,7 @@ export async function loadRealTransformer({ onProgress } = {}) {
     ).then(async ({ pipeline, env }) => {
       env.allowLocalModels = false;
       return pipeline(TASK, MODEL_ID, {
+        dtype: "q4",
         progress_callback: (event) => {
           if (typeof onProgress === "function") {
             onProgress(event);
